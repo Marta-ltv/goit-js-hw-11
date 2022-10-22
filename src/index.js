@@ -1,65 +1,64 @@
 import './css/styles.css';
-import debounce from 'lodash.debounce';
 import { Notify } from 'notiflix/build/notiflix-notify-aio';
-import FetchApiService from './js/fetchCountries';
+import SimpleLightbox from "simplelightbox";
+import "simplelightbox/dist/simple-lightbox.min.css";
+import refs from './js/refs';
+import { FetchApiImages } from './js/fetchImages';
 
-const fetchApiService = new FetchApiService();
+const fetchApiImages = new FetchApiImages();
 
-const DEBOUNCE_DELAY = 300;
-
-const searchCountry = document.querySelector('#search-box');
-const allCountries = document.querySelector('.country-list');
-const infoCountry = document.querySelector('.country-info');
-
-searchCountry.addEventListener('input', debounce(onInputSearch, DEBOUNCE_DELAY));
-
-function markupAllCountries(data) {
-    return data.map(country => {
-        return `<li class="country-items">
-  <img class="country-img" src="${country.flags.svg}" alt="Flag" width = 20, height = 15></img>
-  ${country.name.official}</li>`;
-    }).join('');
-}
-
-function markupOneCountry(data) {
-    return data.map(country => {
-        return `<img src="${country.flags.svg}" alt="Flag" width="70" height="65"></img>
-                <h2 class="country-info-title">${country.name.official}</h2>
-            <p>Capital: <span>${country.capital}</span></p>
-            <p>Population: <span>${country.population}</span></p>
-            <p>Languages: <span>${Object.values(country.languages)}</span></p>`
-    }).join('');
-}
-
-function renderMarkup(data) {
-    clearPage();
-    if (data.length === 1) {
-        allCountries.insertAdjacentHTML('beforeend', markupOneCountry(data));
-    } else if (data.length > 1 && data.length <= 10) {
-        infoCountry.insertAdjacentHTML('beforeend', markupAllCountries(data));
-    }  else if (data.length > 10) {
-        Notify.info("Too many matches found. Please enter a more specific name.");
-    }
-}
-
-function onInputSearch(e) {
-    e.preventDefault();
-    if (e.target.value.trim() === '') {
-        clearPage();
+const handleSubmit = event => {
+    event.preventDefault();
+    const { elements: { searchQuery }, } = event.currentTarget;
+    const query = searchQuery.value.trim();
+    if (!query) {
+        Notify.failure("Enter data to search.")
         return;
     }
-    fetchApiService.searchCountry = e.target.value.trim();
-    fetchApiService
-        .fetchCountries()
-        .then(data => renderMarkup(data))
-        .catch(onError);
-}
-
-const onError = () => {
-    Notify.failure('Oops, there is no country with that name');
+    
+    fetchApiImages.getImages(query).then(({ results }) => {
+    createMarkup(results);
+    });
 };
 
-function clearPage() {
-    allCountries.innerHTML = '';
-    infoCountry.innerHTML = '';
+refs.formRef.addEventListener('submit', handleSubmit);
+    
+function createMarkup(photos) {
+    return photos.map(({webformatURL,largeImageURL,tags,likes,comments,downloads}) => {
+        return `<div class="photo-card">
+  <a class="gallery-item" href="${largeImageURL}"><img class="gallery-image" src="${webformatURL}" alt="${tags}" loading="lazy"/></a>
+  <div class="info">
+    <p class="info-item">
+      <b>Likes: ${likes}</b>
+    </p>
+    <p class="info-item">
+      <b>Views: ${views}</b>
+    </p>
+    <p class="info-item">
+      <b>Comments: ${comments}</b>
+    </p>
+    <p class="info-item">
+      <b>Downloads: ${downloads}</b>
+    </p>
+  </div>
+</div>`
+    }).join('');
 }
+
+`<div class="photo-card">
+  <a class="gallery-item" href="${largeImageURL}"><img class="gallery-image" src="${webformatURL}" alt="${tags}" loading="lazy"/></a>
+  <div class="info">
+    <p class="info-item">
+      <b>Likes: ${likes}</b>
+    </p>
+    <p class="info-item">
+      <b>Views: ${views}</b>
+    </p>
+    <p class="info-item">
+      <b>Comments: ${comments}</b>
+    </p>
+    <p class="info-item">
+      <b>Downloads: ${downloads}</b>
+    </p>
+  </div>
+</div>`
