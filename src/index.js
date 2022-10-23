@@ -15,50 +15,38 @@ const handleSubmit = event => {
         Notify.failure("Enter data to search.")
         return;
     }
-    
+  fetchApiImages.searchQuery = query;
+  
     fetchApiImages.getImages(query).then(({ results }) => {
-    createMarkup(results);
+      const markup = createMarkup(results);
+      console.log(markup)
     });
 };
 
 refs.formRef.addEventListener('submit', handleSubmit);
     
 function createMarkup(photos) {
-    return photos.map(({webformatURL,largeImageURL,tags,likes,comments,downloads}) => {
-        return `<div class="photo-card">
-  <a class="gallery-item" href="${largeImageURL}"><img class="gallery-image" src="${webformatURL}" alt="${tags}" loading="lazy"/></a>
-  <div class="info">
+    const markup = photos.map(({ largeImageURL, webformatURL, tags, likes, views,comments, downloads } ) => `<div class="photo-card">
+    <a class="gallery-item" href="${largeImageURL}"><img class="gallery-image" src="${webformatURL}" alt="${tags}" loading="lazy"/></a>
+    <div class="info">
     <p class="info-item">
-      <b>Likes: ${likes}</b>
+        <b>Likes: </b></br>${likes}
     </p>
     <p class="info-item">
-      <b>Views: ${views}</b>
+        <b>Views: </b></br>${views}
     </p>
     <p class="info-item">
-      <b>Comments: ${comments}</b>
+        <b>Comments: </b></br>${comments}
     </p>
     <p class="info-item">
-      <b>Downloads: ${downloads}</b>
+        <b>Downloads: </b></br>${downloads}
     </p>
-  </div>
-</div>`
-    }).join('');
+    </div></div>`);
+
+    return markup.join('')
 }
 
-`<div class="photo-card">
-  <a class="gallery-item" href="${largeImageURL}"><img class="gallery-image" src="${webformatURL}" alt="${tags}" loading="lazy"/></a>
-  <div class="info">
-    <p class="info-item">
-      <b>Likes: ${likes}</b>
-    </p>
-    <p class="info-item">
-      <b>Views: ${views}</b>
-    </p>
-    <p class="info-item">
-      <b>Comments: ${comments}</b>
-    </p>
-    <p class="info-item">
-      <b>Downloads: ${downloads}</b>
-    </p>
-  </div>
-</div>`
+
+
+
+
