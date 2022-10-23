@@ -15,7 +15,6 @@ const handleSubmit = event => {
         Notify.failure("Enter data to search.")
         return;
     }
-  fetchApiImages.searchQuery = query;
   
     fetchApiImages.getImages(query).then(({ results }) => {
       const markup = createMarkup(results);
