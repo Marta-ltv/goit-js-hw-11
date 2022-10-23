@@ -4,26 +4,27 @@ import SimpleLightbox from "simplelightbox";
 import "simplelightbox/dist/simple-lightbox.min.css";
 import refs from './js/refs';
 import { FetchApiImages } from './js/fetchImages';
+// import { createMarkup } from './js/createMarkup';
 
 const fetchApiImages = new FetchApiImages();
 
-const handleSubmit = event => {
+
+function onSearch (event) {
     event.preventDefault();
-    const { elements: { searchQuery }, } = event.currentTarget;
-    const query = searchQuery.value.trim();
-    if (!query) {
-        Notify.failure("Enter data to search.")
+    const queryInput = event.currentTarget.elements.searchQuery.value.trim();
+  
+    console.log(queryInput);
+    if (!queryInput) {
+        Notify.failure("Enter data to search.");
         return;
     }
-  
-    fetchApiImages.getImages(query).then(({ results }) => {
+
+    fetchApiImages.getImages(queryInput).then(({ results }) => {
       const markup = createMarkup(results);
-      console.log(markup)
+        refs.galleryRef.insertAdjacentHTML('beforeend', markup);
     });
 };
 
-refs.formRef.addEventListener('submit', handleSubmit);
-    
 function createMarkup(photos) {
     const markup = photos.map(({ largeImageURL, webformatURL, tags, likes, views,comments, downloads } ) => `<div class="photo-card">
     <a class="gallery-item" href="${largeImageURL}"><img class="gallery-image" src="${webformatURL}" alt="${tags}" loading="lazy"/></a>
@@ -45,6 +46,8 @@ function createMarkup(photos) {
     return markup.join('')
 }
 
+    
+ refs.formRef.addEventListener('submit', onSearch);
 
 
 
