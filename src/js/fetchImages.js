@@ -1,5 +1,5 @@
 import axios from "axios";
-// axios.default.baseURL = 'https://pixabay.com/api/';
+
 
 
 export default class FetchApiImages  {

@@ -1,10 +1,9 @@
 import './css/styles.css';
 import { Notify } from 'notiflix/build/notiflix-notify-aio';
-// import SimpleLightbox from "simplelightbox";
-// import "simplelightbox/dist/simple-lightbox.min.css";
+import SimpleLightbox from "simplelightbox";
+import "simplelightbox/dist/simple-lightbox.min.css";
 import refs from './js/refs';
 import FetchApiImages from './js/fetchImages';
-// import { createMarkup } from './js/createMarkup';
 
 const fetchApiImages = new FetchApiImages();
 
@@ -12,10 +11,10 @@ function onSearch (e) {
     e.preventDefault();
     fetchApiImages.searchQuery = e.currentTarget.elements.searchQuery.value.trim();
   
-    if (!queryInput) {
-        Notify.failure("Enter data to search.");
-        return;
-    }
+    // if (!queryInput) {
+    //     Notify.failure("Enter data to search.");
+    //     return;
+    // }
 
     fetchApiImages.getImages().then(({ results }) => {
       const markup = createMarkup(results);
