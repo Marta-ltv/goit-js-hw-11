@@ -1,29 +1,33 @@
 import './css/styles.css';
 import { Notify } from 'notiflix/build/notiflix-notify-aio';
-import SimpleLightbox from "simplelightbox";
-import "simplelightbox/dist/simple-lightbox.min.css";
+// import SimpleLightbox from "simplelightbox";
+// import "simplelightbox/dist/simple-lightbox.min.css";
 import refs from './js/refs';
-import { FetchApiImages } from './js/fetchImages';
+import FetchApiImages from './js/fetchImages';
 // import { createMarkup } from './js/createMarkup';
 
 const fetchApiImages = new FetchApiImages();
 
-
-function onSearch (event) {
-    event.preventDefault();
-    const queryInput = event.currentTarget.elements.searchQuery.value.trim();
+function onSearch (e) {
+    e.preventDefault();
+    fetchApiImages.searchQuery = e.currentTarget.elements.searchQuery.value.trim();
   
-    console.log(queryInput);
-    if (!queryInput) {
-        Notify.failure("Enter data to search.");
-        return;
-    }
+    // if (!queryInput) {
+    //     Notify.failure("Enter data to search.");
+    //     return;
+    // }
 
-    fetchApiImages.getImages(queryInput).then(({ results }) => {
+    fetchApiImages.getImages().then(({ results }) => {
       const markup = createMarkup(results);
         refs.galleryRef.insertAdjacentHTML('beforeend', markup);
     });
 };
+
+function onLoadMore() {
+fetchApiImages.getImages()
+}
+
+
 
 function createMarkup(photos) {
     const markup = photos.map(({ largeImageURL, webformatURL, tags, likes, views,comments, downloads } ) => `<div class="photo-card">
@@ -46,9 +50,11 @@ function createMarkup(photos) {
     return markup.join('')
 }
 
-    
- refs.formRef.addEventListener('submit', onSearch);
 
+
+    
+refs.formRef.addEventListener('submit', onSearch);
+refs.loadMoreBtn.addEventListener('click', onLoadMore);
 
 
 
