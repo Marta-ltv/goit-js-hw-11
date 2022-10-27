@@ -12,10 +12,10 @@ function onSearch (e) {
     e.preventDefault();
     fetchApiImages.searchQuery = e.currentTarget.elements.searchQuery.value.trim();
   
-    // if (!queryInput) {
-    //     Notify.failure("Enter data to search.");
-    //     return;
-    // }
+    if (!queryInput) {
+        Notify.failure("Enter data to search.");
+        return;
+    }
 
     fetchApiImages.getImages().then(({ results }) => {
       const markup = createMarkup(results);
