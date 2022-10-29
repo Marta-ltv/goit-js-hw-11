@@ -1,80 +1,78 @@
-import './css/styles.css';
+import { FetchImagesService } from './js/fetchImagesService';
+import { refs } from './js/getRefs';
+import { LoadMoreBtn } from './js/load-more-btn';
+import { makeImageMarkup } from './js/markupService';
 import { Notify } from 'notiflix/build/notiflix-notify-aio';
 import SimpleLightbox from "simplelightbox";
 import "simplelightbox/dist/simple-lightbox.min.css";
-import { refs } from './js/refs';
-import { FetchApiImages } from './js/fetchImages';
 
-const fetchApiImages = new FetchApiImages();
 
-// let query = '';
+const fetchImagesService = new FetchImagesService();
+const loadMoreBtn = new LoadMoreBtn({ selektor: '.load-more', hidden: true });
+const lightbox = new SimpleLightbox('.gallery a', { captionDelay
+    : 250,
+});
+
 
 function onSearch(e) {
     e.preventDefault();
-    // fetchApiImages.searchQuery = e.currentTarget.elements.searchQuery.value.trim();
-    // fetchApiImages.resetPage();
-    const {
-        elements: { searchQuery },
-    } = e.currentTarget;
-    const query = searchQuery.value.trim();
-    
-    if (!query) {
-        Notify.failure("Enter data to search.");
-        return;
+
+    const currentWord = e.currentTarget.elements.searchQuery.value.trim();
+    if (currentWord === '') {
+        return Notify.info(`Enter a word to search for images.`);
     }
-    fetchApiImages.getImages(query).then(data => {
-        console.log(data);
-    });
-};
+    fetchImagesService.searchQuery = currentWord;
+    loadMoreBtn.show();
+    fetchImagesService.resetPage();
+    clearImageContainer();
+    fetchImages();
+}
 
-// function onLoadMore() {
-//     fetchApiImages.getImages().then(data => {
-//         console.log(data)
-//      });;
-// }
-  
-     
+function clearImageContainer() {
+    refs.containerDiv.innerHTML = '';
+}
 
-    //     fetchApiImages.getImages().then(({ results }) => {
-    //       const markup = createMarkup(results);
-    //         refs.galleryRef.insertAdjacentHTML('beforeend', markup);
-    //     });
-    // };
+function fetchImages() {
+    loadMoreBtn.disabled();
+    fetchImagesService.fetchImages().then(({data}) => {
+        if (data.total === 0) {
+            Notify.failure(`Sorry, there are no images matching your search query: ${fetchImagesService.searchQuery}. Please try again.`);
+            loadMoreBtn.hide();
+            return;
+        }
+        appendImagesMarkup(data);
+        onPageScrolling()
+        lightbox.refresh();
+        const { totalHits } = data;
 
-    
-   
+        if (refs.containerDiv.children.length === totalHits ) {
+            Notify.info(`We're sorry, but you've reached the end of search results.`);
+            loadMoreBtn.hide();
+        } else {
+            loadMoreBtn.enable();
+            Notify.success(`Hooray! We found ${totalHits} images.`);
+        }
+    }).catch(handleError);
+}
 
+function handleError() {
+    console.log('Error!');
+}
 
-// function createMarkup(photos) {
-//     const markup = photos.map(({ largeImageURL, webformatURL, tags, likes, views,comments, downloads } ) => `<div class="photo-card">
-//     <a class="gallery-item" href="${largeImageURL}"><img class="gallery-image" src="${webformatURL}" alt="${tags}" loading="lazy"/></a>
-//     <div class="info">
-//     <p class="info-item">
-//         <b>Likes: </b></br>${likes}
-//     </p>
-//     <p class="info-item">
-//         <b>Views: </b></br>${views}
-//     </p>
-//     <p class="info-item">
-//         <b>Comments: </b></br>${comments}
-//     </p>
-//     <p class="info-item">
-//         <b>Downloads: </b></br>${downloads}
-//     </p>
-//     </div></div>`);
+function appendImagesMarkup(data) {
+    refs.containerDiv.insertAdjacentHTML('beforeend', makeImageMarkup(data));
+}
 
-//     return markup.join('')
-// }
+//  Плавне прокручування сторінки після запиту та відтворення кожної наступної групи зображень
 
-<<<<<<< HEAD
-return markup.join('')
-=======
+function onPageScrolling(){ 
+    const { height: cardHeight } = refs.containerDiv
+        .firstElementChild.getBoundingClientRect();
+        window.scrollBy({
+        top: cardHeight * 2,
+        behavior: "smooth",
+        });
+}
 
-
-    
-refs.formRef.addEventListener('submit', onSearch);
-// refs.loadMoreBtn.addEventListener('click', onLoadMore);
-
-
-
->>>>>>> 23bf2291c6fe9d1046cd7153eefbd779d313a918
+refs.formSearch.addEventListener('submit', onSearch);
+loadMoreBtn.refs.button.addEventListener('click', fetchImages);
