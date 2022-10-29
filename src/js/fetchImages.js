@@ -1,18 +1,48 @@
-import axios from "axios";
-// axios.default.baseURL = 'https://pixabay.com/api/';
+// import axios from "axios";
+// const API_KEY = '30787461-ba0c148aaad98f08ab67703d7';
+// axios.defaults.baseURL = 'https://pixabay.com/api';
+// const PARAM = 'per_page=40&orientation=horizontal&image_type=photo&safesearch=true';
 
-
-export class FetchApiImages  {
+export class FetchApiImages {
+  
+  // this.query = '';
+  // this.page = 1;
+  
   getImages(query) {
-    const url = `https://pixabay.com/api/?key=30787461-ba0c148aaad98f08ab67703d7&q=${query}&image_type=photo&per_page=40&orientation=horizontal&safesearch=true`;
+    const url = `https://pixabay.com/api/?key=30787461-ba0c148aaad98f08ab67703d7&q=${query}&page=${page}&per_page=40&orientation=horizontal&image_type=photo&safesearch=true`;
     return fetch(url).then(response => {
-      if (!response.ok) {
-        throw new Error(response.status);
-      }
+        if (!response.ok) {
+          throw new Error(response.status);
+        }
       return response.json();
-    });
+  
+  
+      });
   }
 }
+    //   .then(data => {
+    //     this.incrementPage();
+    //     return data.articles;
+    //   })
+    // .catch(error => {
+  
+  
 
-{/* <a href="images/image1.jpg"><img src="images/thumbs/thumb1.jpg" alt="" title=""/></a>
-    <a href="images/image2.jpg"><img src="images/thumbs/thumb2.jpg" alt="" title="Beautiful Image"/></a> */}
+//   incrementPage() {
+//         this.page += 1;
+//     }
+
+//   resetPage() {
+//         this.page = 1;
+//     }
+
+//   get searchQuery() {
+//   return this.query;
+//  }
+
+//   set searchQuery(newQuery) {
+//   this.query = newQuery;
+//   }
+// }
+
+export { FetchApiImages };
