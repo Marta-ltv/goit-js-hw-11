@@ -46,4 +46,9 @@ function createMarkup(photos) {
     return markup.join('')
 }
 
-return markup.join('')
+
+
+    return markup.join('')
+
+
+    return markup.join('')
