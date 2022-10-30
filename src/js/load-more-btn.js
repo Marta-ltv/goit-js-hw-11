@@ -11,7 +11,13 @@ class LoadMoreBtn {
         refs.label = refs.button.querySelector('.label');
         return refs;
     }
+    show() {
+        this.refs.button.classList.remove('is-hidden');
+    }
 
+    hide() {
+        this.refs.button.classList.add('is-hidden');
+    }
     disabled() {
         this.refs.button.disabled = true;
         this.refs.label.textContent = 'Loading...';
@@ -22,13 +28,7 @@ class LoadMoreBtn {
         this.refs.label.textContent = 'Load more';
     }
 
-    show() {
-        this.refs.button.classList.remove('is-hidden');
-    }
-
-    hide() {
-        this.refs.button.classList.add('is-hidden');
-    }
+   
 }
 
 export { LoadMoreBtn };
