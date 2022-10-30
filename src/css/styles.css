@@ -21,6 +21,13 @@ img {
   height: auto;
 }
 
+.gallery img {
+  display: block;
+  width: 100%;
+  height: 200px;
+  object-fit: cover;
+}
+
 button {
   display: block;
 }
@@ -107,9 +114,3 @@ button:hover {
   margin-right: 15px;
 }
 
-.gallery img {
-  display: block;
-  width: 100%;
-  height: 200px;
-  object-fit: cover;
-}
