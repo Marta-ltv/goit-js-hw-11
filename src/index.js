@@ -28,10 +28,6 @@ function onSearch(e) {
     fetchImages();
 }
 
-function clearImageContainer() {
-    refs.containerDiv.innerHTML = '';
-}
-
 function fetchImages() {
     loadMoreBtn.disabled();
     fetchImagesService.fetchImages().then(({data}) => {
@@ -53,6 +49,11 @@ function fetchImages() {
             Notify.success(`Hooray! We found ${totalHits} images.`);
         }
     }).catch(handleError);
+}
+
+
+function clearImageContainer() {
+    refs.containerDiv.innerHTML = '';
 }
 
 function handleError() {
